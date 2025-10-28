@@ -18,7 +18,10 @@ import os
 CHEXZERO_PATH = Path(__file__).parent.parent / "models" / "CheXzero"
 sys.path.insert(0, str(CHEXZERO_PATH))
 
-from src.h5_converter import H5Converter
+try:
+    from src.h5_converter import H5Converter
+except ModuleNotFoundError:
+    from h5_converter import H5Converter
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

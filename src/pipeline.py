@@ -128,8 +128,8 @@ class ReportGenerationPipeline:
             vision_start = time.time()
 
             # Handle different vision backends
-            if self.vision_backend == 'gpt4':
-                # GPT-4 Vision provides structured medical analysis
+            if self.vision_backend in ['gpt4', 'chexzero']:
+                # GPT-4 Vision and CheXzero provide structured medical analysis
                 vision_result = self.vision_analyzer.analyze_xray(image)
                 caption = self.vision_analyzer.generate_findings_summary(vision_result)
 
