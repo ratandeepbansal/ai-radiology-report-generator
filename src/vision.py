@@ -40,6 +40,15 @@ except ImportError as e:
     GPT4_VISION_AVAILABLE = False
     logger.warning(f"GPT-4 Vision module not available: {e}")
 
+# Import CheXzero analyzer
+try:
+    from src.vision_chexzero import CheXzeroAnalyzer
+    CHEXZERO_AVAILABLE = True
+    logger.info("CheXzero module available")
+except ImportError as e:
+    CHEXZERO_AVAILABLE = False
+    logger.warning(f"CheXzero module not available: {e}")
+
 
 class VisionAnalyzer:
     """
@@ -398,15 +407,16 @@ class VisionAnalyzer:
 
 # Utility functions
 
-def create_vision_analyzer(backend: Optional[str] = None) -> Union[VisionAnalyzer, 'GPT4VisionAnalyzer']:
+def create_vision_analyzer(backend: Optional[str] = None) -> Union[VisionAnalyzer, 'GPT4VisionAnalyzer', 'CheXzeroAnalyzer']:
     """
     Factory function to create appropriate vision analyzer based on backend
 
     Args:
         backend: Vision backend to use:
-            - 'blip': Use BLIP-2 (default, fast, CPU-friendly)
-            - 'gpt4': Use GPT-4 Vision (recommended, medical-grade)
-            - 'auto': Auto-select (GPT-4 if available, else BLIP-2)
+            - 'blip': Use BLIP-2 (fast, generic, CPU-friendly)
+            - 'gpt4': Use GPT-4 Vision (medical-grade, API-based)
+            - 'chexzero': Use CheXzero (expert-level, local, medical-specific)
+            - 'auto': Auto-select (CheXzero → GPT-4 → BLIP-2)
             - None: Use config.VISION_BACKEND
 
     Returns:
@@ -418,17 +428,43 @@ def create_vision_analyzer(backend: Optional[str] = None) -> Union[VisionAnalyze
 
     backend = backend.lower()
 
-    # Auto-selection
+    # Auto-selection (priority: CheXzero → GPT-4 → BLIP-2)
     if backend == 'auto':
-        if GPT4_VISION_AVAILABLE and config.OPENAI_API_KEY:
+        if CHEXZERO_AVAILABLE:
+            backend = 'chexzero'
+            logger.info("Auto-selected CheXzero backend (expert-level medical analysis)")
+        elif GPT4_VISION_AVAILABLE and config.OPENAI_API_KEY:
             backend = 'gpt4'
-            logger.info("Auto-selected GPT-4 Vision backend")
+            logger.info("Auto-selected GPT-4 Vision backend (CheXzero not available)")
         else:
             backend = 'blip'
-            logger.info("Auto-selected BLIP-2 backend (GPT-4 Vision not available)")
+            logger.info("Auto-selected BLIP-2 backend (advanced backends not available)")
 
     # Create analyzer
-    if backend == 'gpt4':
+    if backend == 'chexzero':
+        if not CHEXZERO_AVAILABLE:
+            logger.warning("CheXzero not available, falling back to GPT-4 Vision or BLIP-2")
+            # Try GPT-4 as fallback
+            if GPT4_VISION_AVAILABLE and config.OPENAI_API_KEY:
+                return GPT4VisionAnalyzer(model_name=getattr(config, 'GPT4_VISION_MODEL', 'gpt-4o'))
+            else:
+                return VisionAnalyzer()
+
+        logger.info("Creating CheXzero analyzer")
+        try:
+            return CheXzeroAnalyzer(
+                threshold=getattr(config, 'CHEXZERO_THRESHOLD', 0.5)
+            )
+        except FileNotFoundError as e:
+            logger.error(f"CheXzero model weights not found: {e}")
+            logger.info("Please run: python download_chexzero_weights.py")
+            logger.warning("Falling back to GPT-4 Vision or BLIP-2")
+            if GPT4_VISION_AVAILABLE and config.OPENAI_API_KEY:
+                return GPT4VisionAnalyzer(model_name=getattr(config, 'GPT4_VISION_MODEL', 'gpt-4o'))
+            else:
+                return VisionAnalyzer()
+
+    elif backend == 'gpt4':
         if not GPT4_VISION_AVAILABLE:
             logger.warning("GPT-4 Vision not available, falling back to BLIP-2")
             return VisionAnalyzer()

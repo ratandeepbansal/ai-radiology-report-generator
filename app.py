@@ -216,14 +216,19 @@ def main():
         # Vision Backend Selection
         vision_backend = st.selectbox(
             "Vision Backend",
-            options=["gpt4", "blip", "auto"],
+            options=["gpt4", "chexzero", "blip", "auto"],
             index=0,  # Default to gpt4
             format_func=lambda x: {
-                "gpt4": "🏥 GPT-4 Vision (Medical-Grade)",
+                "gpt4": "🏥 GPT-4 Vision (Medical-Grade, API)",
+                "chexzero": "🎯 CheXzero (Expert-Level, Local)",
                 "blip": "🖼️ BLIP-2 (Fast, Generic)",
-                "auto": "🔄 Auto-Select"
+                "auto": "🔄 Auto-Select Best"
             }[x],
-            help="Choose vision analysis backend"
+            help="Choose vision analysis backend\n\n"
+                 "• GPT-4 Vision: Medical-grade (18-32s, $3-5/1K)\n"
+                 "• CheXzero: Expert-level accuracy (5-15s, FREE, requires weights)\n"
+                 "• BLIP-2: Fast generic (2-7s, FREE)\n"
+                 "• Auto: Automatically selects best available"
         )
 
         use_rag = st.checkbox(
@@ -415,13 +420,14 @@ def main():
                     backend_display = {
                         'blip': '🖼️ BLIP-2 (Generic Vision Model)',
                         'gpt4': '🏥 GPT-4 Vision (Medical-Grade Analysis)',
+                        'chexzero': '🎯 CheXzero (Expert-Level Medical AI)',
                         'auto': '🔄 Auto-Selected Backend'
                     }.get(backend, backend)
 
                     st.markdown(f"**Backend:** {backend_display}")
 
-                    # If we have GPT-4 Vision details, show structured pathology info
-                    if st.session_state.vision_details and backend == 'gpt4':
+                    # If we have GPT-4 Vision or CheXzero details, show structured pathology info
+                    if st.session_state.vision_details and backend in ['gpt4', 'chexzero']:
                         details = st.session_state.vision_details
 
                         # Overall Status

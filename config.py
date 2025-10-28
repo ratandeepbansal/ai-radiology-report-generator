@@ -14,7 +14,12 @@ HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN", "")
 
 # ==================== Model Configuration ====================
 # Vision Model Configuration
-VISION_BACKEND = "gpt4"  # Options: "blip" (fast/generic), "gpt4" (medical-grade), "auto"
+# Backend Options:
+#   "blip"     - BLIP-2: Fast, generic (2-7s per image, FREE, local)
+#   "gpt4"     - GPT-4 Vision: Medical-grade via API (18-32s, $3-5/1K images)
+#   "chexzero" - CheXzero: Expert-level medical-specific (5-15s, FREE, local)
+#   "auto"     - Auto-select best available (CheXzero → GPT-4 → BLIP-2)
+VISION_BACKEND = "gpt4"  # Default to GPT-4 Vision (change to "chexzero" when weights are available)
 VISION_MODEL_NAME = "Salesforce/blip-image-captioning-base"  # Used when VISION_BACKEND is "blip"
 VISION_MODEL_DEVICE = "cuda" if os.getenv("USE_GPU", "false").lower() == "true" else "cpu"
 
@@ -22,6 +27,13 @@ VISION_MODEL_DEVICE = "cuda" if os.getenv("USE_GPU", "false").lower() == "true" 
 GPT4_VISION_MODEL = "gpt-4o-mini"  # GPT-4o-mini with vision capabilities (use "gpt-4o" if available)
 GPT4_VISION_TEMPERATURE = 0.3  # Lower for consistent medical analysis
 GPT4_VISION_MAX_TOKENS = 1500
+
+# CheXzero Configuration (Expert-Level Medical Analysis - Best Accuracy)
+# Download weights: python download_chexzero_weights.py
+# Requirements: ~500MB model weights, h5py library
+CHEXZERO_MODEL_DIR = "models/CheXzero/checkpoints/chexzero_weights"
+CHEXZERO_THRESHOLD = 0.5  # Probability threshold for pathology detection (0-1)
+CHEXZERO_IMAGE_SIZE = (224, 224)  # Standard input size for CheXzero
 
 # LLM Configuration
 LLM_MODEL_NAME = "gpt-4o-mini"  # or "gpt-4" for better quality. Cannot use 5-mini as the style is different.
