@@ -14,8 +14,14 @@ HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN", "")
 
 # ==================== Model Configuration ====================
 # Vision Model Configuration
-VISION_MODEL_NAME = "Salesforce/blip-image-captioning-base"
+VISION_BACKEND = "gpt4"  # Options: "blip" (fast/generic), "gpt4" (medical-grade), "auto"
+VISION_MODEL_NAME = "Salesforce/blip-image-captioning-base"  # Used when VISION_BACKEND is "blip"
 VISION_MODEL_DEVICE = "cuda" if os.getenv("USE_GPU", "false").lower() == "true" else "cpu"
+
+# GPT-4 Vision Configuration (Medical-Grade Analysis - Recommended)
+GPT4_VISION_MODEL = "gpt-4o-mini"  # GPT-4o-mini with vision capabilities (use "gpt-4o" if available)
+GPT4_VISION_TEMPERATURE = 0.3  # Lower for consistent medical analysis
+GPT4_VISION_MAX_TOKENS = 1500
 
 # LLM Configuration
 LLM_MODEL_NAME = "gpt-4o-mini"  # or "gpt-4" for better quality. Cannot use 5-mini as the style is different.
@@ -57,12 +63,12 @@ SYSTEM_PROMPT = """You are an expert radiologist assistant with years of experie
 Your role is to generate structured, professional radiology reports based on X-ray findings."""
 
 REPORT_GENERATION_PROMPT = """
-Task: Generate a structured radiology report based on the following X-ray findings.
+Task: Generate a professional, structured radiology report based on AI-detected findings from chest X-ray analysis.
 
-Vision Model Findings:
+AI Vision Analysis:
 {vision_caption}
 
-Prior Report Context:
+Prior Report Context (for reference):
 {rag_context}
 
 Patient Information:
@@ -71,18 +77,41 @@ Patient Information:
 - Gender: {gender}
 - Date: {date}
 
-Please generate a comprehensive radiology report in the following format:
+Instructions:
+1. Review the AI-detected findings carefully
+2. Synthesize the information into a professional radiology report
+3. Use appropriate medical terminology
+4. Structure your report as follows:
 
 **FINDINGS:**
-[Provide detailed observations from the X-ray, including cardiac silhouette, lung fields, pleural spaces, osseous structures, and any abnormalities]
+[Provide a systematic description of the chest X-ray including:
+ - Heart size and contour
+ - Lung fields (both right and left)
+ - Pleural spaces
+ - Mediastinum
+ - Bones and soft tissues
+ - Any detected abnormalities with their locations and characteristics]
 
 **IMPRESSION:**
-[Provide clinical interpretation and diagnosis based on the findings]
+[Provide clinical interpretation:
+ - Primary diagnosis or most likely diagnosis
+ - Differential diagnoses if applicable
+ - Severity assessment
+ - Comparison to prior studies if relevant context provided]
 
 **RECOMMENDATIONS:**
-[Suggest next steps, follow-up imaging, or clinical correlation if needed]
+[Suggest appropriate follow-up:
+ - Additional imaging if needed
+ - Clinical correlation recommendations
+ - Follow-up timeframe if applicable
+ - Any urgent findings requiring immediate attention]
 
-Be professional, concise, and medically accurate. If the findings are normal, state so clearly.
+Guidelines:
+- Be professional, concise, and clinically accurate
+- If findings indicate a normal study, state clearly "No acute cardiopulmonary abnormality"
+- For abnormal findings, be specific about location, size, and characteristics
+- Consider patient age and gender when relevant
+- Reference AI confidence levels when discussing uncertain findings
 """
 
 NORMAL_FINDINGS_PROMPT = """
@@ -214,11 +243,15 @@ if __name__ == "__main__":
     # Test configuration
     print("MedAssist Copilot Configuration")
     print("=" * 50)
-    print(f"Vision Model: {VISION_MODEL_NAME}")
+    print(f"Vision Backend: {VISION_BACKEND}")
+    if VISION_BACKEND == "gpt4":
+        print(f"GPT-4 Vision Model: {GPT4_VISION_MODEL}")
+    else:
+        print(f"Vision Model: {VISION_MODEL_NAME}")
+        print(f"Device: {VISION_MODEL_DEVICE}")
     print(f"LLM Model: {LLM_MODEL_NAME}")
     print(f"Embedding Model: {EMBEDDING_MODEL_NAME}")
     print(f"Whisper Model: {WHISPER_MODEL_SIZE}")
-    print(f"Device: {VISION_MODEL_DEVICE}")
     print(f"RAG Enabled: {ENABLE_RAG}")
     print(f"Voice Input Enabled: {ENABLE_VOICE_INPUT}")
     print("=" * 50)

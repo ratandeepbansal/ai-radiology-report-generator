@@ -1,7 +1,10 @@
 """
 Vision Module for MedAssist Copilot
 Handles vision-language model integration for X-ray image analysis
-Supports BLIP-2 and other multimodal models
+Supports multiple backends:
+  - BLIP-2: General-purpose vision-language model
+  - GPT-4 Vision: Medical-grade multimodal analysis (recommended)
+  - Hybrid: Uses GPT-4 Vision when available, falls back to BLIP-2
 """
 
 import os
@@ -27,6 +30,15 @@ import config
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Import GPT-4 Vision analyzer
+try:
+    from src.vision_gpt4 import GPT4VisionAnalyzer
+    GPT4_VISION_AVAILABLE = True
+    logger.info("GPT-4 Vision module available")
+except ImportError as e:
+    GPT4_VISION_AVAILABLE = False
+    logger.warning(f"GPT-4 Vision module not available: {e}")
 
 
 class VisionAnalyzer:
@@ -385,6 +397,57 @@ class VisionAnalyzer:
 
 
 # Utility functions
+
+def create_vision_analyzer(backend: Optional[str] = None) -> Union[VisionAnalyzer, 'GPT4VisionAnalyzer']:
+    """
+    Factory function to create appropriate vision analyzer based on backend
+
+    Args:
+        backend: Vision backend to use:
+            - 'blip': Use BLIP-2 (default, fast, CPU-friendly)
+            - 'gpt4': Use GPT-4 Vision (recommended, medical-grade)
+            - 'auto': Auto-select (GPT-4 if available, else BLIP-2)
+            - None: Use config.VISION_BACKEND
+
+    Returns:
+        Initialized vision analyzer instance
+    """
+    # Determine backend
+    if backend is None:
+        backend = getattr(config, 'VISION_BACKEND', 'blip')
+
+    backend = backend.lower()
+
+    # Auto-selection
+    if backend == 'auto':
+        if GPT4_VISION_AVAILABLE and config.OPENAI_API_KEY:
+            backend = 'gpt4'
+            logger.info("Auto-selected GPT-4 Vision backend")
+        else:
+            backend = 'blip'
+            logger.info("Auto-selected BLIP-2 backend (GPT-4 Vision not available)")
+
+    # Create analyzer
+    if backend == 'gpt4':
+        if not GPT4_VISION_AVAILABLE:
+            logger.warning("GPT-4 Vision not available, falling back to BLIP-2")
+            return VisionAnalyzer()
+
+        if not config.OPENAI_API_KEY:
+            logger.warning("OpenAI API key not found, falling back to BLIP-2")
+            return VisionAnalyzer()
+
+        logger.info("Creating GPT-4 Vision analyzer")
+        return GPT4VisionAnalyzer(model_name=getattr(config, 'GPT4_VISION_MODEL', 'gpt-4o'))
+
+    elif backend == 'blip':
+        logger.info("Creating BLIP-2 analyzer")
+        return VisionAnalyzer()
+
+    else:
+        logger.warning(f"Unknown backend '{backend}', defaulting to BLIP-2")
+        return VisionAnalyzer()
+
 
 def quick_caption(image_path: str, model_name: Optional[str] = None) -> Optional[str]:
     """

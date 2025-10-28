@@ -14,7 +14,7 @@ from PIL import Image
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.vision import VisionAnalyzer
+from src.vision import VisionAnalyzer, create_vision_analyzer
 from src.llm_processor import LLMProcessor
 from src.report_manager import ReportManager
 import config
@@ -32,7 +32,7 @@ class ReportGenerationPipeline:
 
     def __init__(
         self,
-        vision_model: Optional[str] = None,
+        vision_backend: Optional[str] = None,
         llm_model: Optional[str] = None,
         use_rag: bool = True,
         api_key: Optional[str] = None
@@ -41,7 +41,7 @@ class ReportGenerationPipeline:
         Initialize the pipeline
 
         Args:
-            vision_model: Vision model name (defaults to config)
+            vision_backend: Vision backend ('blip', 'gpt4', 'auto', or None for config default)
             llm_model: LLM model name (defaults to config)
             use_rag: Whether to use RAG for context
             api_key: OpenAI API key (defaults to config)
@@ -51,9 +51,11 @@ class ReportGenerationPipeline:
         # Initialize components
         self.use_rag = use_rag and config.ENABLE_RAG
 
-        # Vision Analyzer
-        logger.info("Loading vision model...")
-        self.vision_analyzer = VisionAnalyzer(model_name=vision_model)
+        # Vision Analyzer (using factory function)
+        logger.info("Loading vision analyzer...")
+        self.vision_analyzer = create_vision_analyzer(backend=vision_backend)
+        self.vision_backend = vision_backend or config.VISION_BACKEND
+        logger.info(f"   Using vision backend: {self.vision_backend}")
 
         # LLM Processor
         logger.info("Initializing LLM processor...")
@@ -125,12 +127,29 @@ class ReportGenerationPipeline:
             logger.info("\n📸 Step 1/3: Analyzing X-ray image...")
             vision_start = time.time()
 
-            if detailed_vision:
-                vision_result = self.vision_analyzer.analyze_xray(image, detailed=True)
-                caption = vision_result['captions'].get('medical',
-                         vision_result['captions'].get('base', ''))
+            # Handle different vision backends
+            if self.vision_backend == 'gpt4':
+                # GPT-4 Vision provides structured medical analysis
+                vision_result = self.vision_analyzer.analyze_xray(image)
+                caption = self.vision_analyzer.generate_findings_summary(vision_result)
+
+                # Store detailed findings for potential UI display
+                result['vision_details'] = {
+                    'raw_analysis': vision_result.get('raw_analysis', ''),
+                    'detected_pathologies': vision_result.get('detected_pathologies', []),
+                    'is_normal': vision_result.get('is_normal', False),
+                    'confidence': vision_result.get('confidence', 'UNKNOWN')
+                }
             else:
-                caption = self.vision_analyzer.generate_medical_description(image)
+                # BLIP-2 provides simple captions
+                if detailed_vision:
+                    vision_result = self.vision_analyzer.analyze_xray(image, detailed=True)
+                    caption = vision_result['captions'].get('medical',
+                             vision_result['captions'].get('base', ''))
+                else:
+                    caption = self.vision_analyzer.generate_medical_description(image)
+
+                result['vision_details'] = {'caption_only': True}
 
             vision_time = time.time() - vision_start
             self.stats['vision_time'] += vision_time
@@ -142,9 +161,10 @@ class ReportGenerationPipeline:
                 return result
 
             logger.info(f"   ✅ Image analyzed in {vision_time:.2f}s")
-            logger.info(f"   Caption: {caption[:100]}...")
+            logger.info(f"   Caption preview: {caption[:150]}...")
             result['vision_caption'] = caption
             result['vision_time'] = vision_time
+            result['vision_backend'] = self.vision_backend
 
             # Step 2: RAG - Retrieve Prior Reports
             rag_context = None
