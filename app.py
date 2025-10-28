@@ -127,13 +127,17 @@ if 'report_generated' not in st.session_state:
     st.session_state.report_generated = False
 if 'vision_caption' not in st.session_state:
     st.session_state.vision_caption = None
+if 'vision_details' not in st.session_state:
+    st.session_state.vision_details = None
 
 
-@st.cache_resource
-def load_pipeline():
-    """Load the report generation pipeline (cached)"""
+def load_pipeline(vision_backend="gpt4", use_rag=True):
+    """Load the report generation pipeline"""
     try:
-        pipeline = ReportGenerationPipeline(use_rag=True)
+        pipeline = ReportGenerationPipeline(
+            vision_backend=vision_backend,
+            use_rag=use_rag
+        )
         return pipeline
     except Exception as e:
         st.error(f"Failed to load pipeline: {str(e)}")
@@ -166,6 +170,7 @@ def main():
             st.session_state.current_report = None
             st.session_state.report_generated = False
             st.session_state.vision_caption = None
+            st.session_state.vision_details = None
             st.rerun()
 
     # Sidebar - Patient Information & Settings
@@ -207,6 +212,19 @@ def main():
 
         # Settings
         st.header("⚙️ Settings")
+
+        # Vision Backend Selection
+        vision_backend = st.selectbox(
+            "Vision Backend",
+            options=["gpt4", "blip", "auto"],
+            index=0,  # Default to gpt4
+            format_func=lambda x: {
+                "gpt4": "🏥 GPT-4 Vision (Medical-Grade)",
+                "blip": "🖼️ BLIP-2 (Fast, Generic)",
+                "auto": "🔄 Auto-Select"
+            }[x],
+            help="Choose vision analysis backend"
+        )
 
         use_rag = st.checkbox(
             "Enable RAG",
@@ -294,12 +312,14 @@ def main():
                         tmp_path = tmp_file.name
 
                     try:
-                        # Load pipeline if not already loaded
-                        if st.session_state.pipeline is None:
-                            with st.spinner("🔄 Loading AI models (this may take a moment)..."):
-                                st.session_state.pipeline = load_pipeline()
+                        # Load pipeline with selected backend
+                        with st.spinner(f"🔄 Loading AI models with {vision_backend.upper()} backend..."):
+                            pipeline = load_pipeline(
+                                vision_backend=vision_backend,
+                                use_rag=use_rag
+                            )
 
-                        if st.session_state.pipeline:
+                        if pipeline:
                             # Generate report
                             with st.spinner("🔬 Analyzing X-ray and generating report..."):
                                 progress_bar = st.progress(0)
@@ -307,7 +327,7 @@ def main():
                                 # Simulate progress
                                 progress_bar.progress(25, text="Analyzing image...")
 
-                                result = st.session_state.pipeline.generate_report(
+                                result = pipeline.generate_report(
                                     image=tmp_path,
                                     patient_id=patient_id,
                                     age=age,
@@ -323,6 +343,8 @@ def main():
                                     st.session_state.current_report = result
                                     st.session_state.report_generated = True
                                     st.session_state.vision_caption = result.get('vision_caption', '')
+                                    st.session_state.vision_details = result.get('vision_details', None)
+                                    st.session_state.pipeline = pipeline  # Store for save functionality
 
                                     st.success("✅ Report generated successfully!")
                                     st.balloons()
@@ -385,10 +407,88 @@ def main():
 
             st.markdown("---")
 
-            # Vision Caption
-            if st.session_state.vision_caption:
-                with st.expander("🔍 Vision Analysis", expanded=False):
-                    st.write(st.session_state.vision_caption)
+            # Vision Analysis Section (Enhanced)
+            if st.session_state.vision_caption or st.session_state.vision_details:
+                with st.expander("🔍 Vision Analysis", expanded=True):
+                    # Show backend info
+                    backend = report.get('vision_backend', 'Unknown')
+                    backend_display = {
+                        'blip': '🖼️ BLIP-2 (Generic Vision Model)',
+                        'gpt4': '🏥 GPT-4 Vision (Medical-Grade Analysis)',
+                        'auto': '🔄 Auto-Selected Backend'
+                    }.get(backend, backend)
+
+                    st.markdown(f"**Backend:** {backend_display}")
+
+                    # If we have GPT-4 Vision details, show structured pathology info
+                    if st.session_state.vision_details and backend == 'gpt4':
+                        details = st.session_state.vision_details
+
+                        # Overall Status
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            is_normal = details.get('is_normal', False)
+                            status_color = "🟢" if is_normal else "🔴"
+                            status_text = "NORMAL" if is_normal else "ABNORMAL"
+                            st.markdown(f"**Status:** {status_color} **{status_text}**")
+
+                        with col2:
+                            confidence = details.get('confidence', 'N/A')
+                            conf_emoji = {
+                                'HIGH': '✅',
+                                'MODERATE': '⚠️',
+                                'LOW': '❌'
+                            }.get(confidence, '❓')
+                            st.markdown(f"**Confidence:** {conf_emoji} {confidence}")
+
+                        # Detected Pathologies
+                        pathologies = details.get('detected_pathologies', [])
+                        if pathologies:
+                            st.markdown("---")
+                            st.markdown("**🔍 Detected Pathologies:**")
+
+                            for pathology in pathologies:
+                                path_name = pathology.get('pathology', 'Unknown')
+                                path_conf = pathology.get('confidence', 'UNKNOWN')
+
+                                # Color code by confidence
+                                conf_color = {
+                                    'HIGH': '#FF4444',
+                                    'MODERATE': '#FFA500',
+                                    'LOW': '#FFD700'
+                                }.get(path_conf, '#888888')
+
+                                conf_icon = {
+                                    'HIGH': '🔴',
+                                    'MODERATE': '🟡',
+                                    'LOW': '🟢'
+                                }.get(path_conf, '⚪')
+
+                                st.markdown(
+                                    f"{conf_icon} **{path_name}** "
+                                    f"<span style='color:{conf_color}'>({path_conf} confidence)</span>",
+                                    unsafe_allow_html=True
+                                )
+                        else:
+                            st.markdown("---")
+                            st.success("✅ No significant pathologies detected")
+
+                        # Medical Findings Summary
+                        if st.session_state.vision_caption:
+                            st.markdown("---")
+                            st.markdown("**📋 Medical Findings Summary:**")
+                            st.text_area(
+                                "findings_summary",
+                                value=st.session_state.vision_caption,
+                                height=120,
+                                label_visibility="collapsed",
+                                disabled=True
+                            )
+
+                    # For BLIP-2 or when no detailed info available
+                    elif st.session_state.vision_caption:
+                        st.markdown("**Caption:**")
+                        st.info(st.session_state.vision_caption)
 
             st.markdown("---")
 

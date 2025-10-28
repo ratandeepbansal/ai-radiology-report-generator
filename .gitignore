@@ -114,3 +114,18 @@ site/
 chromadb/
 *.faiss
 *.index
+
+# HuggingFace model cache
+models/models--*/
+models/.locks/
+
+# CheXzero (cloned repository)
+models/CheXzero/
+
+# Generated reports
+data/reports/generated/
+
+# Evaluation results (can regenerate)
+vision_comparison_results.json
+vision_comparison_table.csv
+evaluation_results.json

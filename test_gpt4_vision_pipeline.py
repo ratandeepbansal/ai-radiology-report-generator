@@ -57,7 +57,7 @@ def test_gpt4_vision_standalone():
     # Initialize analyzer
     print("\n🔧 Initializing GPT-4 Vision Analyzer...")
     try:
-        analyzer = GPT4VisionAnalyzer(model_name="gpt-4o")
+        analyzer = GPT4VisionAnalyzer(model_name="gpt-4o-mini")
         print("   ✅ Analyzer initialized")
     except Exception as e:
         print(f"   ❌ Failed to initialize: {e}")
