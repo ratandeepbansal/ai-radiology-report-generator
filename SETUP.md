@@ -105,7 +105,7 @@ Based on the task breakdown, here's what's done and what's next:
 - [ ] Create Streamlit secrets file for API keys (for deployment)
   - Will be done when deploying to Streamlit Cloud
 
-- [ ] Set up Git repository for version control
+- [X] Set up Git repository for version control
   ```bash
   git init
   git add .

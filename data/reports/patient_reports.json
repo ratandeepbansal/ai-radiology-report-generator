@@ -1,0 +1,227 @@
+[
+  {
+    "patient_id": "P001",
+    "date": "2024-01-15",
+    "report": {
+      "findings": "The lungs are clear bilaterally without focal consolidation, pleural effusion, or pneumothorax. Cardiac silhouette is normal in size and contour. Mediastinal and hilar contours are unremarkable. No acute osseous abnormality is identified.",
+      "impression": "No acute cardiopulmonary abnormality.",
+      "recommendations": "Routine clinical follow-up as indicated."
+    },
+    "metadata": {
+      "age": 45,
+      "gender": "M",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "Routine physical examination"
+    }
+  },
+  {
+    "patient_id": "P002",
+    "date": "2024-01-18",
+    "report": {
+      "findings": "There is patchy airspace opacity in the right lower lobe consistent with pneumonia. No pleural effusion or pneumothorax. Cardiac size is within normal limits. Osseous structures are intact.",
+      "impression": "Right lower lobe pneumonia.",
+      "recommendations": "Clinical correlation and appropriate antibiotic therapy recommended. Follow-up imaging in 6-8 weeks to document resolution."
+    },
+    "metadata": {
+      "age": 62,
+      "gender": "F",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "Fever and cough"
+    }
+  },
+  {
+    "patient_id": "P003",
+    "date": "2024-01-22",
+    "report": {
+      "findings": "Diffuse bilateral interstitial opacities are noted throughout both lung fields. Cardiac silhouette appears mildly enlarged. No focal consolidation or pleural effusion identified. Costophrenic angles are sharp.",
+      "impression": "Findings suggestive of interstitial lung disease. Mild cardiomegaly.",
+      "recommendations": "Recommend high-resolution CT chest for further evaluation. Consider pulmonology consultation. Echocardiogram for cardiac assessment."
+    },
+    "metadata": {
+      "age": 58,
+      "gender": "M",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "Progressive dyspnea"
+    }
+  },
+  {
+    "patient_id": "P004",
+    "date": "2024-02-01",
+    "report": {
+      "findings": "Large left-sided pleural effusion causing partial obscuration of the left hemithorax. Blunting of the left costophrenic angle. Right lung appears clear. Trachea is midline. No pneumothorax.",
+      "impression": "Large left pleural effusion.",
+      "recommendations": "Thoracentesis recommended for diagnostic and therapeutic purposes. Consider ultrasound guidance for fluid analysis and culture."
+    },
+    "metadata": {
+      "age": 71,
+      "gender": "F",
+      "exam_type": "Chest X-Ray PA",
+      "indication": "Shortness of breath"
+    }
+  },
+  {
+    "patient_id": "P005",
+    "date": "2024-02-05",
+    "report": {
+      "findings": "Hyperinflation of lungs bilaterally with flattened diaphragms. Increased AP diameter suggesting barrel chest configuration. Attenuated vascular markings. No focal consolidation or pleural effusion. Heart size appears normal given the hyperinflation.",
+      "impression": "Findings consistent with chronic obstructive pulmonary disease (COPD).",
+      "recommendations": "Clinical correlation with spirometry. Continue medical management. Pulmonary rehabilitation may be beneficial."
+    },
+    "metadata": {
+      "age": 68,
+      "gender": "M",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "COPD follow-up"
+    }
+  },
+  {
+    "patient_id": "P006",
+    "date": "2024-02-10",
+    "report": {
+      "findings": "3 cm round opacity in the right upper lobe with irregular borders. No cavitation. No associated pleural effusion. Remainder of lungs are clear. Cardiac and mediastinal contours are normal. No hilar lymphadenopathy evident on plain film.",
+      "impression": "Solitary pulmonary nodule in right upper lobe. Differential includes primary lung malignancy versus benign lesion.",
+      "recommendations": "Urgent CT chest with contrast for further characterization. Consider comparison with prior imaging if available. PET-CT and tissue diagnosis may be required."
+    },
+    "metadata": {
+      "age": 66,
+      "gender": "M",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "Persistent cough, weight loss"
+    }
+  },
+  {
+    "patient_id": "P007",
+    "date": "2024-02-14",
+    "report": {
+      "findings": "Moderate cardiomegaly with cardiothoracic ratio approximately 0.6. Pulmonary vascular congestion with cephalization of vessels. Bilateral perihilar haziness. Small bilateral pleural effusions. Kerley B lines noted at lung bases.",
+      "impression": "Radiographic findings consistent with congestive heart failure.",
+      "recommendations": "Medical management with diuretics. Consider echocardiogram for cardiac function assessment. Clinical correlation with BNP levels."
+    },
+    "metadata": {
+      "age": 74,
+      "gender": "F",
+      "exam_type": "Chest X-Ray PA",
+      "indication": "Acute dyspnea, pedal edema"
+    }
+  },
+  {
+    "patient_id": "P008",
+    "date": "2024-02-18",
+    "report": {
+      "findings": "Left-sided pneumothorax occupying approximately 30% of the left hemithorax. Visible visceral pleural line. Left lung is partially collapsed. Right lung is clear and expanded. No mediastinal shift. No subcutaneous emphysema.",
+      "impression": "Moderate left-sided pneumothorax.",
+      "recommendations": "Urgent thoracic surgery consultation. Chest tube placement likely required. Close monitoring. Repeat chest X-ray after intervention."
+    },
+    "metadata": {
+      "age": 28,
+      "gender": "M",
+      "exam_type": "Chest X-Ray PA",
+      "indication": "Sudden onset chest pain and dyspnea"
+    }
+  },
+  {
+    "patient_id": "P009",
+    "date": "2024-02-22",
+    "report": {
+      "findings": "Endotracheal tube in satisfactory position with tip approximately 4 cm above the carina. Nasogastric tube courses into the stomach. Diffuse bilateral airspace opacities consistent with pulmonary edema. Cardiac silhouette is enlarged. No pneumothorax.",
+      "impression": "Satisfactory positioning of support devices. Pulmonary edema. Cardiomegaly.",
+      "recommendations": "Continue mechanical ventilation. Aggressive diuresis. Optimize hemodynamics. Follow-up imaging to assess response to therapy."
+    },
+    "metadata": {
+      "age": 81,
+      "gender": "F",
+      "exam_type": "Chest X-Ray Portable AP",
+      "indication": "ICU follow-up, intubated"
+    }
+  },
+  {
+    "patient_id": "P010",
+    "date": "2024-03-01",
+    "report": {
+      "findings": "Multiple bilateral pulmonary nodules of varying sizes ranging from 3-15 mm. Largest nodule in right upper lobe measures 15 mm. Hilar and mediastinal lymphadenopathy cannot be excluded on plain film. No pleural effusion or pneumothorax.",
+      "impression": "Multiple bilateral pulmonary nodules. Differential includes metastatic disease versus granulomatous disease.",
+      "recommendations": "CT chest for detailed evaluation. Obtain history of malignancy. Consider comparison with prior studies. Tissue diagnosis and staging workup as appropriate."
+    },
+    "metadata": {
+      "age": 59,
+      "gender": "F",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "History of breast cancer, staging"
+    }
+  },
+  {
+    "patient_id": "P011",
+    "date": "2024-03-05",
+    "report": {
+      "findings": "Fractures of the left 5th, 6th, and 7th ribs laterally. No pneumothorax or hemothorax. Lungs are clear bilaterally. Cardiac and mediastinal contours are normal. No subcutaneous emphysema.",
+      "impression": "Multiple left-sided rib fractures without complications.",
+      "recommendations": "Pain management. Incentive spirometry to prevent atelectasis. Clinical follow-up. No surgical intervention required at this time."
+    },
+    "metadata": {
+      "age": 42,
+      "gender": "M",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "Blunt chest trauma"
+    }
+  },
+  {
+    "patient_id": "P012",
+    "date": "2024-03-10",
+    "report": {
+      "findings": "Wedge-shaped opacity in right lower lobe with pleural-based configuration. No cavitation. Small right pleural effusion. Left lung is clear. Cardiac size is normal.",
+      "impression": "Right lower lobe opacity concerning for pulmonary infarction. Small right pleural effusion.",
+      "recommendations": "CT pulmonary angiography to evaluate for pulmonary embolism. Anticoagulation if confirmed. Lower extremity Doppler ultrasound."
+    },
+    "metadata": {
+      "age": 55,
+      "gender": "F",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "Chest pain, leg swelling"
+    }
+  },
+  {
+    "patient_id": "P013",
+    "date": "2024-03-15",
+    "report": {
+      "findings": "Prominent bilateral hilar lymphadenopathy with symmetric appearance. Reticulonodular pattern in mid and lower lung zones. No pleural effusion. Cardiac silhouette is normal.",
+      "impression": "Bilateral hilar lymphadenopathy with interstitial changes. Findings suggestive of sarcoidosis.",
+      "recommendations": "Clinical correlation with symptoms. Consider pulmonary function tests. CT chest and bronchoscopy with biopsy may be indicated for definitive diagnosis."
+    },
+    "metadata": {
+      "age": 34,
+      "gender": "F",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "Persistent cough, fatigue"
+    }
+  },
+  {
+    "patient_id": "P014",
+    "date": "2024-03-20",
+    "report": {
+      "findings": "Right upper lobe cavitary lesion measuring approximately 4 cm with thick irregular walls and air-fluid level. Surrounding patchy opacities. No pleural effusion or pneumothorax. Left lung is clear.",
+      "impression": "Right upper lobe cavitary lesion. Differential includes lung abscess, cavitating malignancy, or necrotizing infection.",
+      "recommendations": "CT chest for better characterization. Sputum cultures and acid-fast bacilli smear. Bronchoscopy may be needed. Infectious disease and pulmonology consultation."
+    },
+    "metadata": {
+      "age": 51,
+      "gender": "M",
+      "exam_type": "Chest X-Ray PA/Lateral",
+      "indication": "Fever, productive cough, night sweats"
+    }
+  },
+  {
+    "patient_id": "P015",
+    "date": "2024-03-25",
+    "report": {
+      "findings": "Complete opacification of right hemithorax with loss of right heart border and right hemidiaphragm. Mediastinal shift to the left. Tracheal deviation to the left. Left lung appears clear with compensatory hyperinflation.",
+      "impression": "Complete opacification of right hemithorax with contralateral mediastinal shift, concerning for massive pleural effusion versus complete lung collapse.",
+      "recommendations": "Urgent chest ultrasound to differentiate effusion from consolidation. If effusion, immediate thoracentesis indicated. Consider chest CT after initial drainage. Thoracic surgery consultation."
+    },
+    "metadata": {
+      "age": 69,
+      "gender": "M",
+      "exam_type": "Chest X-Ray PA",
+      "indication": "Severe dyspnea, decreased breath sounds right side"
+    }
+  }
+]
