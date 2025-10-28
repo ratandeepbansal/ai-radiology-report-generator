@@ -18,7 +18,7 @@ VISION_MODEL_NAME = "Salesforce/blip-image-captioning-base"
 VISION_MODEL_DEVICE = "cuda" if os.getenv("USE_GPU", "false").lower() == "true" else "cpu"
 
 # LLM Configuration
-LLM_MODEL_NAME = "gpt-4o-mini"  # or "gpt-4" for better quality
+LLM_MODEL_NAME = "gpt-4o-mini"  # or "gpt-4" for better quality. Cannot use 5-mini as the style is different.
 LLM_MAX_TOKENS = 1000
 LLM_TEMPERATURE = 0.7
 LLM_TOP_P = 0.9
