@@ -1,0 +1,50 @@
+# Core Framework
+streamlit>=1.28.0
+
+# Deep Learning & Transformers
+transformers>=4.35.0
+torch>=2.1.0
+torchvision>=0.16.0
+accelerate>=0.25.0
+bitsandbytes>=0.41.0
+
+# Image Processing
+pillow>=10.0.0
+opencv-python>=4.8.0
+
+# LLM & API Integration
+openai>=1.3.0
+langchain>=0.0.340
+langchain-community>=0.0.1
+langchain-openai>=0.0.2
+
+# Vector Databases & Embeddings
+chromadb>=0.4.18
+faiss-cpu>=1.7.4
+sentence-transformers>=2.2.2
+
+# Audio Processing
+openai-whisper>=20231117
+streamlit-webrtc>=0.47.0
+pyaudio>=0.2.14
+sounddevice>=0.4.6
+
+# Data & Datasets
+datasets>=2.15.0
+pandas>=2.1.0
+numpy>=1.24.0
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+requests>=2.31.0
+
+# Evaluation Metrics
+nltk>=3.8.1
+rouge-score>=0.1.2
+
+# Optional: For PDF export
+reportlab>=4.0.0
+
+
+dotenv
